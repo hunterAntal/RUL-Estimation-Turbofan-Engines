@@ -1,0 +1,25 @@
+Top 3 Tuning Levers                                                                                       │
+│                                                                                                           │
+│ 1. Sequence (Window) Length                                                                               │
+│                                                                                                           │
+│ Current: Fixed at 30 cycles                                                                               │
+│ Why it matters: RUL degradation in FD001 can span 100-300+ cycles. A 30-step window may miss long-range   │
+│ degradation trends. Longer windows give the LSTM more context.                                            │
+│ Suggested values: [20, 30, 50, 75]                                                                        │
+│ Change location: Cell 81 (windowing) + Cell 89 (grid search loop)                                         │
+│                                                                                                           │
+│ 2. Learning Rate + Weight Decay (Optimizer Config)                                                        │
+│                                                                                                           │
+│ Current: Adam, lr=1e-3, no weight decay                                                                   │
+│ Why it matters: lr=1e-3 is often too aggressive for LSTMs on small datasets; adding weight decay (L2 reg) │
+│  helps prevent overfitting.                                                                               │
+│ Suggested values: lr=[1e-3, 5e-4, 1e-4], weight_decay=[0, 1e-4, 1e-3]                                     │
+│ Change location: Cell 89 (optimizer instantiation inside training loop)                                   │
+│                                                                                                           │
+│ 3. Dropout Rate (expanded range)                                                                          │
+│                                                                                                           │
+│ Current: [0.2, 0.3] only                                                                                  │
+│ Why it matters: FD001 is a relatively small dataset; higher dropout (0.4–0.5) often reduces overfitting   │
+│ meaningfully. The current range is too narrow to find the sweet spot.                                     │
+│ Suggested values: [0.1, 0.2, 0.3, 0.4, 0.5]                                                               │
+│ Change location: Cell 89 (hyperparameter grid) 
