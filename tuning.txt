@@ -23,3 +23,44 @@ Top 3 Tuning Levers                                                             
 │ meaningfully. The current range is too narrow to find the sweet spot.                                     │
 │ Suggested values: [0.1, 0.2, 0.3, 0.4, 0.5]                                                               │
 │ Change location: Cell 89 (hyperparameter grid) 
+
+
+VERSION 2
+
+
+Based on where the model sits (Test RMSE≈13.3, R²≈0.80) and what's already been tuned, here are the three
+  highest-leverage ideas remaining:
+
+  ---
+  1. Learning Rate Scheduler
+
+  What: Add ReduceLROnPlateau — halve the LR when val RMSE plateaus for N epochs.
+  Why: Fixed LR is coarse. The model likely oscillates near the optimum rather than converging into it. A
+  scheduler costs nothing and typically gives 0.5–1.5 RMSE for free.
+  Change: One line after optimizer init: scheduler = ReduceLROnPlateau(optimizer, patience=5, factor=0.5).
+  Call scheduler.step(val_rmse) each epoch.
+
+  ---
+  2. Temporal Attention over LSTM Hidden States
+
+  What: Instead of just taking the last hidden state, apply a learned attention weight across all seq_len
+  timesteps and use the weighted sum.
+  Why: With windows of 50–75 cycles, not all timesteps matter equally — early cycles in a healthy engine are
+  noise. Attention lets the model focus on the degradation-onset region. This is the single biggest
+  architectural upgrade available.
+  Change: Add a 1-layer attention head (≈100 params) after the LSTM, replace h[:, -1, :] with the attended
+  context vector.
+
+  ---
+  3. Asymmetric / Weighted Loss
+
+  What: Penalize underpredicting RUL more than overpredicting — or upweight low-RUL samples in the loss.
+  Why: MSE treats a 10-cycle error at RUL=5 the same as at RUL=120. In practice, under-predicting early
+  failure is catastrophic; over-predicting is just conservative. The NASA scoring function for this dataset
+  is already asymmetric — matching it in training directly optimizes what the benchmark measures.
+  Change: Replace nn.MSELoss with a custom loss: torch.where(pred > target, alpha * err**2, err**2) where
+  alpha > 1 (e.g. 1.5–2.0), or exponential penalty as in the NASA scoring function.
+
+  ---
+  Recommended order: Scheduler first (trivial, immediate payoff) → Weighted loss (directly targets the
+  benchmark metric) → Attention (highest complexity, highest ceiling).
