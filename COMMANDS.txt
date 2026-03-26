@@ -1,0 +1,51 @@
+COMMANDS REFERENCE — Turbofan RUL Project
+==========================================
+
+ENVIRONMENT SETUP
+-----------------
+python3 -m venv venv
+  Create a virtual environment in the project directory.
+
+source venv/bin/activate
+  Activate the venv (run before any pip installs or python commands).
+
+deactivate
+  Exit the venv.
+
+pip install ipykernel
+  Install the package that lets Jupyter see this venv as a kernel.
+
+python -m ipykernel install --user --name=turbofan-venv --display-name "Python (turbofan-venv)"
+  Register the venv as a named Jupyter kernel (run once per venv).
+
+DEPENDENCIES
+------------
+pip install kagglehub tqdm matplotlib pandas seaborn scikit-learn numpy
+  Install all notebook dependencies into the active venv.
+
+pip install torch
+  Install PyTorch (CPU). For GPU (CUDA 12.1):
+  pip install torch --index-url https://download.pytorch.org/whl/cu121
+
+JUPYTER
+-------
+jupyter notebook Project_WorkSpace.ipynb
+  Open the notebook in the browser.
+
+  In Jupyter: Kernel → Change Kernel → Python (turbofan-venv)
+  Switch to the venv kernel so pip installs inside the notebook land in the right place.
+
+pip install ipywidgets
+  Install progress bar widget support for tqdm in Jupyter (fixes IProgress warning).
+
+PERMISSIONS
+-----------
+sudo chown -R hunterantal "/home/hunterantal/Dev/4011_RUL_Est_ of_Turbofan_Engines/"
+  Reclaim ownership of all files in the project directory. Needed if Jupyter was previously
+  run with sudo, which causes saved output files (PNGs, CSVs, etc.) to be owned by root.
+
+NOTES
+-----
+- numpy<2 pin was removed — it conflicted with opencv (which was also removed, as cv2 is unused).
+- Always activate the venv before launching Jupyter to ensure the correct kernel is available.
+- Never launch Jupyter with sudo — output files will be owned by root and unwritable by your user.
