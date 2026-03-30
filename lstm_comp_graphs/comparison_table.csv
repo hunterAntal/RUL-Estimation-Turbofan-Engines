@@ -1,0 +1,18 @@
+Metric,Sanity LSTM,Best LSTM
+MAE (Val),—,8.548
+RMSE (Val),—,11.734
+R² (Val),—,0.9159
+MAE (Test),12.066,9.942
+RMSE (Test),16.960,13.331
+R² (Test),0.6745,0.8392
+Val→Test R² Drop,—,0.0767
+% Within 10 Cycles (Test),58.5%,62.4%
+Parameters,"24,961","296,065"
+Seq Length,30,75
+Hidden Size,64,256
+Num Layers,1,1
+Dropout,0.2,0.4
+Learning Rate,1e-3,5e-04
+Weight Decay,0,0e+00
+Attention,False,False
+Loss Alpha,1.0,1.5

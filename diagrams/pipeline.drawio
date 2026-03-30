@@ -1,0 +1,70 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" version="29.6.6">
+  <diagram name="Pipeline" id="pipeline">
+    <mxGraphModel dx="824" dy="1388" grid="0" gridSize="10" guides="1" tooltips="1" connect="0" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="3FxqDDxSmGUawaavGtOx-11" edge="1" parent="1" source="3FxqDDxSmGUawaavGtOx-9" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=19;startSize=8;endSize=8;" target="eval" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="3FxqDDxSmGUawaavGtOx-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=19;" value="" vertex="1">
+          <mxGeometry height="128" width="693" x="235" y="451" as="geometry" />
+        </mxCell>
+        <mxCell id="3FxqDDxSmGUawaavGtOx-8" edge="1" parent="1" source="3FxqDDxSmGUawaavGtOx-1" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=19;startSize=8;endSize=8;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="581.5000000000002" y="349.74816176470586" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3FxqDDxSmGUawaavGtOx-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=19;" value="" vertex="1">
+          <mxGeometry height="128" width="693" x="235" y="147" as="geometry" />
+        </mxCell>
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1;fontColor=#1A1A1A;" value="SYSTEM PIPELINE" vertex="1">
+          <mxGeometry height="40" width="800" x="184" y="-66" as="geometry" />
+        </mxCell>
+        <mxCell id="3FxqDDxSmGUawaavGtOx-7" edge="1" parent="1" source="nasa" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=19;startSize=8;endSize=8;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="583.9999999999998" y="145.0193014705883" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nasa" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#F1F1F1;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#1A1A1A;" value="NASA C-MAPS" vertex="1">
+          <mxGeometry height="60" width="200" x="484" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="preprocess" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#A8DADC;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#1A1A1A;" value="RUL Labels" vertex="1">
+          <mxGeometry height="60" width="160" x="504" y="181" as="geometry" />
+        </mxCell>
+        <mxCell id="features" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#A8DADC;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#1A1A1A;" value="Feature Selection" vertex="1">
+          <mxGeometry height="60" width="160" x="704" y="181" as="geometry" />
+        </mxCell>
+        <mxCell id="normalise" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#A8DADC;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#1A1A1A;" value="Normalise" vertex="1">
+          <mxGeometry height="60" width="160" x="304" y="181" as="geometry" />
+        </mxCell>
+        <mxCell id="3FxqDDxSmGUawaavGtOx-10" edge="1" parent="1" source="split" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=19;startSize=8;endSize=8;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="583.9999999999998" y="449.64246323529414" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="split" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#A8DADC;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#1A1A1A;" value="Train / Test Split" vertex="1">
+          <mxGeometry height="60" width="200" x="484" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="rf" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#2E86AB;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#FFFFFF;" value="Random Forest" vertex="1">
+          <mxGeometry height="60" width="180" x="284" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="mlp" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#2E86AB;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#FFFFFF;" value="MLP" vertex="1">
+          <mxGeometry height="60" width="180" x="494" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="lstm" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#2E86AB;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#FFFFFF;" value="LSTM" vertex="1">
+          <mxGeometry height="60" width="180" x="704" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="eval" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#F1F1F1;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#1A1A1A;" value="Evaluation" vertex="1">
+          <mxGeometry height="60" width="180" x="491.5" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="a10" edge="1" parent="1" source="eval" style="edgeStyle=orthogonalEdgeStyle;rounded=0;strokeColor=#333333;strokeWidth=2;fontSize=19;" target="results">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="results" parent="1" style="rounded=2;whiteSpace=wrap;html=1;fillColor=#F1F1F1;strokeColor=#333333;fontSize=19;fontStyle=1;fontColor=#1A1A1A;" value="RMSE · MAE · R²" vertex="1">
+          <mxGeometry height="60" width="180" x="491.5" y="750" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
