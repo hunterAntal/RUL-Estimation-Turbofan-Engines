@@ -1,0 +1,74 @@
+<h2>Four-page layout — does this match your vision?</h2>
+<p class="subtitle">Scroll down to see all four pages. Each section shows what lives on that tab.</p>
+
+<style>
+.page-block { background:#0d1f38; border:1px solid #1e3a5f; border-radius:8px; padding:16px; margin-bottom:20px; }
+.page-title { color:#FFC20E; font-size:13px; font-weight:bold; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.page-num { background:#00427A; color:#FFC20E; border-radius:4px; padding:2px 7px; font-size:11px; }
+.row { display:flex; gap:10px; margin-bottom:8px; }
+.widget { background:#1a3354; border-radius:4px; padding:8px 10px; font-size:10px; color:#aac; flex:1; }
+.widget strong { color:#FFC20E; display:block; margin-bottom:3px; font-size:9px; text-transform:uppercase; letter-spacing:.5px; }
+.chart-ph { background:#00427A22; border:1px dashed #00427A; border-radius:4px; height:50px; display:flex; align-items:center; justify-content:center; color:#5588aa; font-size:9px; flex:1; }
+.badge { background:#00427A; color:#aac; border-radius:3px; padding:1px 5px; font-size:9px; margin-right:4px; }
+.divider { border:none; border-top:1px solid #1e3a5f; margin:10px 0; }
+</style>
+
+<div class="page-block">
+  <div class="page-title"><span class="page-num">Tab 1</span> 📊 Dataset Explorer</div>
+  <div class="row">
+    <div class="widget" style="flex:0 0 180px"><strong>Summary Stats</strong>100 engines · 20,631 rows · 15 features · RUL cap 125</div>
+    <div class="widget"><strong>Engine Selector</strong>Dropdown: Engine ID 1–100</div>
+    <div class="widget"><strong>Feature Toggle</strong>15 selected <span class="badge">✓</span> 9 removed <span class="badge">✗</span></div>
+  </div>
+  <div class="row">
+    <div class="chart-ph">Sensor time-series (small multiples or single sensor selector) — Plotly line chart</div>
+  </div>
+  <div class="row">
+    <div class="chart-ph">RUL degradation curve for selected engine — piecewise linear, capped at 125</div>
+  </div>
+</div>
+
+<div class="page-block">
+  <div class="page-title"><span class="page-num">Tab 2</span> 📈 Model Comparison</div>
+  <div class="row">
+    <div class="widget"><strong>Metrics Table</strong>RF · MLP · LSTM — MAE, RMSE, R², Params, FLOPs (hardcoded from report)</div>
+    <div class="widget"><strong>Winner Badge</strong>LSTM highlighted as final selected model</div>
+  </div>
+  <div class="row">
+    <div class="chart-ph">Bar charts: MAE / RMSE / R² side-by-side (Plotly grouped bar)</div>
+    <div class="chart-ph">Scatter: Predicted vs Actual (3 subplots, one per model)</div>
+  </div>
+  <div class="row">
+    <div class="chart-ph">Residual distributions — Plotly histogram overlay, all 3 models</div>
+  </div>
+</div>
+
+<div class="page-block">
+  <div class="page-title"><span class="page-num">Tab 3</span> 🔮 RUL Predictor</div>
+  <div class="row">
+    <div class="widget" style="flex:0 0 180px"><strong>Test Engine Selector</strong>Dropdown: Test Engine 1–100</div>
+    <div class="widget"><strong>Gauge / Progress Bar</strong>Color: green >60 · yellow 20–60 · red &lt;20 cycles</div>
+    <div class="widget"><strong>Accuracy Context</strong>"Within X cycles of actual RUL"</div>
+  </div>
+  <div class="row">
+    <div class="chart-ph" style="height:70px">Predicted vs Actual line chart for selected test engine across all its cycles</div>
+  </div>
+  <div class="row">
+    <div class="widget" style="background:#1a2a1a; border:1px solid #2a4a2a"><strong style="color:#4a8">Model Status</strong>If .pt missing → "Upload model weights to enable live predictions"</div>
+  </div>
+</div>
+
+<div class="page-block">
+  <div class="page-title"><span class="page-num">Tab 4</span> 🔍 Model Deep Dive</div>
+  <div class="row">
+    <div class="widget"><strong>LSTM Architecture Card</strong>hidden=256 · layers=1 · dropout=0.4 · seq_len=75 · asymmetric α=1.5</div>
+    <div class="widget"><strong>Sanity vs Best LSTM</strong>Side-by-side metric comparison table</div>
+  </div>
+  <div class="row">
+    <div class="chart-ph">Training curve: loss vs epoch (train + val) — Plotly line</div>
+    <div class="chart-ph">Hyperparameter heatmap (RMSE vs hidden_size × seq_len)</div>
+  </div>
+  <div class="row">
+    <div class="chart-ph">CDF of absolute errors — Sanity LSTM vs Best LSTM</div>
+  </div>
+</div>
