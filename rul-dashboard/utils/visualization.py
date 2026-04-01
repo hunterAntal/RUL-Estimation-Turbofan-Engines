@@ -16,13 +16,14 @@ TEXT_DIM   = "#a8ada8"       # muted ivory-grey for gridlines / dim text
 _LAYOUT = dict(
     paper_bgcolor=BG_DARK,
     plot_bgcolor=BG_CARD,
-    font=dict(color=IVORY, family="system-ui", size=15),
-    margin=dict(l=48, r=24, t=52, b=48),
+    font=dict(color=IVORY, family="system-ui", size=18),
+    margin=dict(l=56, r=28, t=64, b=56),
     xaxis=dict(gridcolor="#4d5457", zerolinecolor="#4d5457",
-               tickfont=dict(size=13), title_font=dict(size=14)),
+               tickfont=dict(size=17), title_font=dict(size=19)),
     yaxis=dict(gridcolor="#4d5457", zerolinecolor="#4d5457",
-               tickfont=dict(size=13), title_font=dict(size=14)),
-    title_font=dict(size=17, color=IVORY),
+               tickfont=dict(size=17), title_font=dict(size=19)),
+    title_font=dict(size=23, color=IVORY),
+    legend=dict(font=dict(size=17)),
 )
 
 
@@ -87,12 +88,12 @@ def metrics_bar_chart(models, mae_vals, rmse_vals, r2_vals) -> go.Figure:
     fig.update_layout(
         barmode="group", title="Model Metrics Comparison",
         paper_bgcolor=BG_DARK, plot_bgcolor=BG_CARD,
-        font=dict(color=IVORY, size=15), margin=dict(l=24, r=24, t=64, b=24),
-        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
-        title_font=dict(size=17, color=IVORY),
+        font=dict(color=IVORY, size=18), margin=dict(l=28, r=28, t=72, b=28),
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=17)),
+        title_font=dict(size=23, color=IVORY),
     )
     fig.update_yaxes(gridcolor="#4d5457")
-    fig.update_annotations(font_size=15)
+    fig.update_annotations(font_size=17)
     return fig
 
 
@@ -142,11 +143,11 @@ def rul_gauge(predicted_rul: float) -> go.Figure:
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=predicted_rul,
-        title={"text": "Predicted RUL (cycles)", "font": {"color": IVORY, "size": 18}},
-        number={"font": {"color": needle_color, "size": 56}},
+        title={"text": "Predicted RUL (cycles)", "font": {"color": IVORY, "size": 22}},
+        number={"font": {"color": needle_color, "size": 72}},
         gauge={
             "axis": {"range": [0, 125], "tickcolor": IVORY,
-                     "tickfont": {"color": IVORY, "size": 13}},
+                     "tickfont": {"color": IVORY, "size": 17}},
             "bar": {"color": needle_color, "thickness": 0.3},
             "bgcolor": BG_CARD,
             "borderwidth": 1, "bordercolor": TERRACOTTA,
@@ -158,8 +159,8 @@ def rul_gauge(predicted_rul: float) -> go.Figure:
             "threshold": {"line": {"color": IVORY, "width": 3}, "value": predicted_rul},
         },
     ))
-    fig.update_layout(paper_bgcolor=BG_DARK, font=dict(color=IVORY),
-                      margin=dict(l=24, r=24, t=64, b=24), height=300)
+    fig.update_layout(paper_bgcolor=BG_DARK, font=dict(color=IVORY, size=18),
+                      margin=dict(l=28, r=28, t=72, b=28), height=340)
     return fig
 
 

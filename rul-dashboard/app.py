@@ -37,28 +37,29 @@ st.set_page_config(
 st.markdown("""
 <style>
   /* ── Global ── */
-  .stApp { background-color: #2b2f31; color: #f6f7eb; font-size: 1.05rem; }
+  .stApp { background-color: #2b2f31; color: #f6f7eb; font-size: 1.3rem; }
   section[data-testid="stSidebar"] { display: none; }
 
   /* ── General text ── */
   p, li, span, div { color: #f6f7eb; }
-  label { color: #f6f7eb !important; font-size: 1rem !important; }
+  label { color: #f6f7eb !important; font-size: 1.2rem !important; }
 
   /* ── Inputs / selects ── */
   [data-testid="stSelectbox"] > div,
-  [data-baseweb="select"] { background-color: #393e41 !important; color: #f6f7eb !important; }
+  [data-baseweb="select"] { background-color: #393e41 !important; color: #f6f7eb !important;
+                            font-size: 1.2rem !important; }
 
   /* ── Header ── */
   .lk-header {
     background: linear-gradient(135deg, #393e41, #2b2f31);
-    border-left: 5px solid #e94f37;
-    padding: 20px 28px;
+    border-left: 6px solid #e94f37;
+    padding: 24px 32px;
     border-radius: 6px;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
-  .lk-title { color: #e94f37; font-size: 2rem; font-weight: 800;
-               letter-spacing: 1.5px; text-transform: uppercase; margin: 0; }
-  .lk-sub   { color: #a8ada8; font-size: 1rem; margin: 6px 0 0 0; }
+  .lk-title { color: #e94f37; font-size: 2.6rem; font-weight: 800;
+               letter-spacing: 2px; text-transform: uppercase; margin: 0; }
+  .lk-sub   { color: #a8ada8; font-size: 1.15rem; margin: 8px 0 0 0; }
 
   /* ── Metric cards ── */
   [data-testid="metric-container"] {
@@ -66,17 +67,17 @@ st.markdown("""
     border: 1px solid #4d5457;
     border-top: 4px solid #e94f37;
     border-radius: 6px;
-    padding: 14px;
+    padding: 18px;
   }
   [data-testid="metric-container"] label {
     color: #e94f37 !important; font-weight: 700;
-    font-size: 0.9rem !important; text-transform: uppercase;
+    font-size: 1.05rem !important; text-transform: uppercase;
   }
   [data-testid="metric-container"] [data-testid="metric-value"] {
-    color: #f6f7eb !important; font-size: 2.2rem !important; font-weight: 800;
+    color: #f6f7eb !important; font-size: 2.8rem !important; font-weight: 800;
   }
   [data-testid="metric-container"] [data-testid="metric-delta"] {
-    font-size: 1rem !important;
+    font-size: 1.15rem !important;
   }
 
   /* ── Tabs ── */
@@ -84,38 +85,40 @@ st.markdown("""
     background-color: #e94f37 !important;
     color: #f6f7eb !important;
     font-weight: 800 !important;
-    font-size: 1.05rem !important;
+    font-size: 1.25rem !important;
     border-radius: 4px 4px 0 0;
+    padding: 10px 20px !important;
   }
   button[data-baseweb="tab"] {
     color: #a8ada8 !important;
-    font-size: 1rem !important;
+    font-size: 1.2rem !important;
+    padding: 10px 20px !important;
   }
 
   /* ── Section headers ── */
   .section-header {
-    color: #e94f37; font-size: 1.15rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px;
+    color: #e94f37; font-size: 1.5rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px;
   }
   .info-card {
     background: #393e41; border: 1px solid #4d5457;
-    border-radius: 6px; padding: 14px; font-size: 1.05rem;
+    border-radius: 6px; padding: 16px; font-size: 1.25rem;
   }
 
   /* ── Feature badges ── */
   .badge-on  { background: #1a3320; color: #6ddf8a; border: 1px solid #2e5e3a;
-               border-radius: 4px; padding: 3px 10px; font-size: 0.95rem;
-               margin: 3px; display: inline-block; font-weight: 600; }
+               border-radius: 4px; padding: 5px 12px; font-size: 1.1rem;
+               margin: 4px; display: inline-block; font-weight: 600; }
   .badge-off { background: #3d1a18; color: #f07068; border: 1px solid #6e2e2a;
-               border-radius: 4px; padding: 3px 10px; font-size: 0.95rem;
-               margin: 3px; display: inline-block; font-weight: 600; }
+               border-radius: 4px; padding: 5px 12px; font-size: 1.1rem;
+               margin: 4px; display: inline-block; font-weight: 600; }
 
   /* ── Dataframe ── */
-  [data-testid="stDataFrame"] { font-size: 1rem !important; }
-  [data-testid="stDataFrame"] th { font-size: 1rem !important; font-weight: 700; }
+  [data-testid="stDataFrame"] { font-size: 1.15rem !important; }
+  [data-testid="stDataFrame"] th { font-size: 1.15rem !important; font-weight: 700; }
 
   /* ── Warnings / info ── */
-  [data-testid="stAlert"] { font-size: 1rem; }
+  [data-testid="stAlert"] { font-size: 1.2rem; }
 </style>
 """, unsafe_allow_html=True)
 
