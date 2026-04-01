@@ -270,12 +270,12 @@ with tab1:
         selected_sensor = st.selectbox("Sensor to plot", SELECTED_FEATURES, key="tab1_sensor")
         st.plotly_chart(
             sensor_time_series(engine_data, selected_sensor),
-            use_container_width=True,
+            width='stretch',
         )
 
     st.plotly_chart(
         rul_degradation_curve(engine_data),
-        use_container_width=True,
+        width='stretch',
     )
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -297,7 +297,7 @@ with tab2:
             .highlight_min(subset=["MAE", "RMSE"], color="#0a2d0a")
             .highlight_max(subset=["R²"],           color="#0a2d0a")
             .set_properties(**{"background-color": "#0d1e35", "color": "white"}),
-        use_container_width=True, hide_index=True,
+        width='stretch', hide_index=True,
     )
 
     st.markdown("---")
@@ -311,7 +311,7 @@ with tab2:
             [METRICS[m]["RMSE"] for m in model_names],
             [METRICS[m]["R²"]   for m in model_names],
         ),
-        use_container_width=True,
+        width='stretch',
     )
 
     st.markdown("---")
@@ -326,12 +326,12 @@ with tab2:
         for col, (name, (y_true, y_pred)) in zip(scatter_cols, preds.items()):
             col.plotly_chart(
                 scatter_pred_vs_actual(y_true, y_pred, name),
-                use_container_width=True,
+                width='stretch',
             )
 
         st.markdown('<p class="section-header">Residual Distributions</p>', unsafe_allow_html=True)
         residuals = {name: y_pred - y_true for name, (y_true, y_pred) in preds.items()}
-        st.plotly_chart(residuals_histogram(residuals), use_container_width=True)
+        st.plotly_chart(residuals_histogram(residuals), width='stretch')
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 3 — RUL PREDICTOR
@@ -353,7 +353,7 @@ with tab3:
             # Top row: gauge + metrics
             gcol, mcol = st.columns([1, 1])
             with gcol:
-                st.plotly_chart(rul_gauge(final_pred), use_container_width=True)
+                st.plotly_chart(rul_gauge(final_pred), width='stretch')
             with mcol:
                 st.markdown("<br><br>", unsafe_allow_html=True)
                 st.metric("Predicted RUL",  f"{final_pred:.1f} cycles")
@@ -372,7 +372,7 @@ with tab3:
                         unsafe_allow_html=True)
             st.plotly_chart(
                 prediction_trace(cycles, y_pred, y_true),
-                use_container_width=True,
+                width='stretch',
             )
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -407,7 +407,7 @@ with tab4:
             .highlight_min(subset=["Test MAE", "Test RMSE"], color="#0a2d0a")
             .highlight_max(subset=["Test R²"],               color="#0a2d0a")
             .set_properties(**{"background-color": "#0d1e35", "color": "white"}),
-        use_container_width=True, hide_index=True,
+        width='stretch', hide_index=True,
     )
 
     st.markdown("---")
@@ -419,7 +419,7 @@ with tab4:
     if os.path.exists(train_loss_path) and os.path.exists(val_loss_path):
         with open(train_loss_path) as f: tr_losses = json.load(f)
         with open(val_loss_path)   as f: vl_losses = json.load(f)
-        st.plotly_chart(training_curve(tr_losses, vl_losses), use_container_width=True)
+        st.plotly_chart(training_curve(tr_losses, vl_losses), width='stretch')
     else:
         st.info("Training curve not available — run `python notebook_export.py` to generate.")
 
@@ -447,7 +447,7 @@ with tab4:
                 "Sanity LSTM (sim)": sanity_errors,
                 "Best LSTM":         best_errors,
             }),
-            use_container_width=True,
+            width='stretch',
         )
     else:
         st.info("CDF chart requires model weights — run `python notebook_export.py`.")
