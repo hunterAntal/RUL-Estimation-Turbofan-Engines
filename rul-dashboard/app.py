@@ -1,5 +1,6 @@
 # rul-dashboard/app.py
 import os, json, base64
+import streamlit.components.v1 as components
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -235,101 +236,13 @@ def render_engine_health(engine_id: int, predicted_rul: float, max_rul: float = 
         for i in range(n_seg)
     )
 
-    # ── Turbofan SVG (cross-section side view) ────────────────────────────────
-    svg = """
-<svg viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg"
-     style="width:100%;height:auto;display:block;">
-  <defs>
-    <linearGradient id="nacG" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%"   stop-color="#5a6065"/>
-      <stop offset="45%"  stop-color="#393e41"/>
-      <stop offset="100%" stop-color="#2b2f31"/>
-    </linearGradient>
-    <radialGradient id="flameG" cx="20%" cy="50%" r="80%">
-      <stop offset="0%"   stop-color="#f6f7eb" stop-opacity="0.95"/>
-      <stop offset="35%"  stop-color="#e94f37" stop-opacity="0.75"/>
-      <stop offset="100%" stop-color="#e94f37" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="exhaustG" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="#e94f37" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#e94f37" stop-opacity="0.55"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Exhaust flame glow -->
-  <ellipse cx="440" cy="100" rx="65" ry="35" fill="url(#flameG)"/>
-  <ellipse cx="428" cy="100" rx="42" ry="22" fill="#e94f37" opacity="0.25"/>
-
-  <!-- Outer nacelle body -->
-  <path d="M 78,36 Q 56,100 78,164 L 388,144 L 412,100 L 388,56 Z"
-        fill="url(#nacG)" stroke="#6d7275" stroke-width="2"/>
-
-  <!-- Nacelle highlight glint -->
-  <path d="M 82,40 Q 62,100 82,160 L 92,156 Q 73,100 92,44 Z"
-        fill="#6d7275" opacity="0.35"/>
-
-  <!-- Bypass duct divider lines -->
-  <path d="M 98,68 L 382,79" stroke="#4d5457" stroke-width="1.5" stroke-dasharray="7,4"/>
-  <path d="M 98,132 L 382,121" stroke="#4d5457" stroke-width="1.5" stroke-dasharray="7,4"/>
-
-  <!-- Core engine tube -->
-  <path d="M 98,72 L 378,80 L 378,120 L 98,128 Z"
-        fill="#1e2224" stroke="#5a6065" stroke-width="1.5"/>
-
-  <!-- Compressor blades (front of core) -->
-  <line x1="118" y1="73" x2="118" y2="127" stroke="#a8ada8" stroke-width="2.5"/>
-  <line x1="138" y1="73" x2="138" y2="127" stroke="#a8ada8" stroke-width="2.5"/>
-  <line x1="157" y1="74" x2="157" y2="126" stroke="#a8ada8" stroke-width="2.5"/>
-  <line x1="175" y1="74" x2="175" y2="126" stroke="#a8ada8" stroke-width="2.5"/>
-
-  <!-- Combustion chamber -->
-  <rect x="183" y="76" width="86" height="48" rx="5"
-        fill="#3a1a10" stroke="#e94f37" stroke-width="2"/>
-  <ellipse cx="226" cy="100" rx="24" ry="14" fill="#e94f37" opacity="0.55"/>
-  <ellipse cx="226" cy="100" rx="11" ry="7"  fill="#f6f7eb" opacity="0.65"/>
-
-  <!-- Turbine blades (back of core) -->
-  <line x1="280" y1="76" x2="280" y2="124" stroke="#a8ada8" stroke-width="2.5"/>
-  <line x1="299" y1="77" x2="299" y2="123" stroke="#a8ada8" stroke-width="2.5"/>
-  <line x1="317" y1="78" x2="317" y2="122" stroke="#a8ada8" stroke-width="2.5"/>
-  <line x1="334" y1="79" x2="334" y2="121" stroke="#a8ada8" stroke-width="2.5"/>
-
-  <!-- Exhaust nozzle -->
-  <path d="M 378,80 L 412,91 L 412,109 L 378,120 Z"
-        fill="#1e2224" stroke="#6d7275" stroke-width="1.5"/>
-  <path d="M 378,80 L 460,68 L 460,132 L 378,120 Z" fill="url(#exhaustG)"/>
-
-  <!-- Inlet cowl -->
-  <ellipse cx="80" cy="100" rx="20" ry="65" fill="#4d5457" stroke="#6d7275" stroke-width="2"/>
-  <ellipse cx="84" cy="100" rx="13" ry="52" fill="#1e2224" stroke="#a8ada8" stroke-width="1"/>
-
-  <!-- Fan hub disk -->
-  <ellipse cx="97" cy="100" rx="11" ry="57" fill="#393e41" stroke="#e94f37" stroke-width="2"/>
-  <circle  cx="97" cy="100" r="8"           fill="#4d5457"  stroke="#e94f37" stroke-width="1.5"/>
-
-  <!-- Fan blades -->
-  <line x1="87" y1="52"  x2="107" y2="49"  stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
-  <line x1="87" y1="65"  x2="108" y2="62"  stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
-  <line x1="87" y1="78"  x2="108" y2="76"  stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
-  <line x1="87" y1="91"  x2="108" y2="91"  stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
-  <line x1="87" y1="100" x2="108" y2="100" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
-  <line x1="87" y1="109" x2="108" y2="109" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
-  <line x1="87" y1="122" x2="108" y2="124" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
-  <line x1="87" y1="135" x2="108" y2="138" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
-  <line x1="87" y1="148" x2="107" y2="151" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
-
-  <!-- Mounting pylon (top strut) -->
-  <rect x="196" y="0" width="28" height="38" rx="3" fill="#4d5457" stroke="#6d7275" stroke-width="1.5"/>
-  <line x1="202" y1="4"  x2="202" y2="36" stroke="#5a6065" stroke-width="1"/>
-  <line x1="210" y1="4"  x2="210" y2="36" stroke="#5a6065" stroke-width="1"/>
-  <line x1="218" y1="4"  x2="218" y2="36" stroke="#5a6065" stroke-width="1"/>
-</svg>"""
-
-    # Streamlit strips <svg> tags — encode as base64 data URI for <img> instead
-    svg_b64 = base64.b64encode(svg.strip().encode("utf-8")).decode("utf-8")
+    # ── Load JetEngineAnnotated.svg as base64 data URI ───────────────────────
+    _svg_path = os.path.join(BASE_DIR, "JetEngineAnnotated.svg")
+    with open(_svg_path, "rb") as _f:
+        svg_b64 = base64.b64encode(_f.read()).decode("utf-8")
     svg_img = (
         f'<img src="data:image/svg+xml;base64,{svg_b64}" '
-        f'style="width:100%;height:auto;display:block;"/>'
+        f'style="width:100%;height:auto;display:block;background:#fff;border-radius:6px;padding:6px;"/>'
     )
 
     return """
@@ -590,9 +503,9 @@ with tab3:
             error = abs(final_pred - final_actual)
 
             # Engine health display
-            st.markdown(
+            components.html(
                 render_engine_health(sel_test_engine, final_pred),
-                unsafe_allow_html=True,
+                height=550,
             )
 
             # Metrics row below the panel
