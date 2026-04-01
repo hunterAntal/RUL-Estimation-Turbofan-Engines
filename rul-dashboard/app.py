@@ -497,19 +497,19 @@ with tab1:
                              index=_FEATURE_LABELS.index(default_a), key="tab1_sensor_a")
         st.plotly_chart(
             sensor_time_series(engine_data, _LABEL_TO_FEATURE[lbl_a]),
-            width='stretch',
+            width='stretch', key="tab1_sensor_a_chart",
         )
     with dcol2:
         lbl_b = st.selectbox("Sensor B", _FEATURE_LABELS,
                              index=_FEATURE_LABELS.index(default_b), key="tab1_sensor_b")
         st.plotly_chart(
             sensor_time_series(engine_data, _LABEL_TO_FEATURE[lbl_b]),
-            width='stretch',
+            width='stretch', key="tab1_sensor_b_chart",
         )
 
     st.plotly_chart(
         rul_degradation_curve(engine_data),
-        width='stretch',
+        width='stretch', key="tab1_rul_curve",
     )
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -545,7 +545,7 @@ with tab2:
             [METRICS[m]["RMSE"] for m in model_names],
             [METRICS[m]["R²"]   for m in model_names],
         ),
-        width='stretch',
+        width='stretch', key="tab2_metrics_bar",
     )
 
     st.markdown("---")
@@ -557,10 +557,10 @@ with tab2:
     else:
         st.markdown('<p class="section-header">Predicted vs Actual</p>', unsafe_allow_html=True)
         scatter_cols = st.columns(len(preds))
-        for col, (name, (y_true, y_pred)) in zip(scatter_cols, preds.items()):
+        for i, (col, (name, (y_true, y_pred))) in enumerate(zip(scatter_cols, preds.items())):
             col.plotly_chart(
                 scatter_pred_vs_actual(y_true, y_pred, name),
-                width='stretch',
+                width='stretch', key=f"tab2_scatter_{i}",
             )
 
 
@@ -609,7 +609,7 @@ with tab3:
                         unsafe_allow_html=True)
             st.plotly_chart(
                 prediction_trace(cycles, y_pred, y_true),
-                width='stretch',
+                width='stretch', key="tab3_prediction_trace",
             )
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -656,7 +656,7 @@ with tab4:
     if os.path.exists(train_loss_path) and os.path.exists(val_loss_path):
         with open(train_loss_path) as f: tr_losses = json.load(f)
         with open(val_loss_path)   as f: vl_losses = json.load(f)
-        st.plotly_chart(training_curve(tr_losses, vl_losses), width='stretch')
+        st.plotly_chart(training_curve(tr_losses, vl_losses), width='stretch', key="tab4_training_curve")
     else:
         st.info("Training curve not available — run `python notebook_export.py` to generate.")
 
@@ -684,7 +684,7 @@ with tab4:
                 "Sanity LSTM (sim)": sanity_errors,
                 "Best LSTM":         best_errors,
             }),
-            width='stretch',
+            width='stretch', key="tab4_cdf",
         )
     else:
         st.info("CDF chart requires model weights — run `python notebook_export.py`.")
