@@ -211,6 +211,14 @@ def predict_engine(engine_id: int, _lstm):
     )
 
 
+# ── All plottable features (retained=🟢, removed=🔴) ───────────────────────────
+ALL_FEATURES = [c for c in COLUMN_NAMES if c not in ("engine_id", "cycle")]
+_FEATURE_LABELS = [
+    f"🟢 {f}" if f in SELECTED_FEATURES else f"🔴 {f}"
+    for f in ALL_FEATURES
+]
+_LABEL_TO_FEATURE = {lbl: feat for lbl, feat in zip(_FEATURE_LABELS, ALL_FEATURES)}
+
 # ── Load everything ────────────────────────────────────────────────────────────
 train_df, test_df, train_n, test_n, rul_series, scaler = get_data()
 lstm_model = get_lstm()
@@ -255,21 +263,36 @@ with tab1:
     # Engine selector
     st.markdown('<p class="section-header">Engine Inspector</p>', unsafe_allow_html=True)
     engine_ids = sorted(train_df["engine_id"].unique())
-    sel_engine  = st.selectbox("Select Engine", engine_ids, key="tab1_engine")
-
+    ecol_sel, ecol_stats1, ecol_stats2, ecol_stats3 = st.columns([2, 1, 1, 1])
+    sel_engine = ecol_sel.selectbox("Select Engine", engine_ids, key="tab1_engine")
     engine_data = train_df[train_df["engine_id"] == sel_engine].sort_values("cycle")
-    engine_norm = train_n[train_n["engine_id"] == sel_engine].sort_values("cycle")
 
-    ecol1, ecol2 = st.columns([1, 2])
-    with ecol1:
-        st.metric("Total Cycles",    str(len(engine_data)))
-        st.metric("Final RUL",       "0 (run to failure)")
-        st.metric("Max Sensor Cycles", str(engine_data["cycle"].max()))
+    ecol_stats1.metric("Total Cycles",      str(len(engine_data)))
+    ecol_stats2.metric("Final RUL",         "0 (run to failure)")
+    ecol_stats3.metric("Max Cycle",         str(engine_data["cycle"].max()))
 
-    with ecol2:
-        selected_sensor = st.selectbox("Sensor to plot", SELECTED_FEATURES, key="tab1_sensor")
+    st.markdown("---")
+
+    # Dual sensor comparison
+    st.markdown('<p class="section-header">Sensor Comparison  <span style="font-size:0.75rem;font-weight:400;color:#6688aa">&nbsp;🟢 retained &nbsp; 🔴 removed</span></p>', unsafe_allow_html=True)
+
+    # Default selections: first two retained features
+    default_a = _FEATURE_LABELS[next(i for i, f in enumerate(ALL_FEATURES) if f in SELECTED_FEATURES)]
+    default_b = _FEATURE_LABELS[next(i for i, f in enumerate(ALL_FEATURES) if f in SELECTED_FEATURES and ALL_FEATURES[i] != _LABEL_TO_FEATURE[default_a])]
+
+    dcol1, dcol2 = st.columns(2)
+    with dcol1:
+        lbl_a = st.selectbox("Sensor A", _FEATURE_LABELS,
+                             index=_FEATURE_LABELS.index(default_a), key="tab1_sensor_a")
         st.plotly_chart(
-            sensor_time_series(engine_data, selected_sensor),
+            sensor_time_series(engine_data, _LABEL_TO_FEATURE[lbl_a]),
+            width='stretch',
+        )
+    with dcol2:
+        lbl_b = st.selectbox("Sensor B", _FEATURE_LABELS,
+                             index=_FEATURE_LABELS.index(default_b), key="tab1_sensor_b")
+        st.plotly_chart(
+            sensor_time_series(engine_data, _LABEL_TO_FEATURE[lbl_b]),
             width='stretch',
         )
 
