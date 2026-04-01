@@ -33,54 +33,89 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── Lakehead CSS theme ─────────────────────────────────────────────────────────
+# ── CSS theme: Ivory / Fiery Terracotta / Gunmetal ────────────────────────────
 st.markdown("""
 <style>
-  .stApp { background-color: #060e1a; color: #ffffff; }
+  /* ── Global ── */
+  .stApp { background-color: #2b2f31; color: #f6f7eb; font-size: 1.05rem; }
   section[data-testid="stSidebar"] { display: none; }
 
-  /* Header */
+  /* ── General text ── */
+  p, li, span, div { color: #f6f7eb; }
+  label { color: #f6f7eb !important; font-size: 1rem !important; }
+
+  /* ── Inputs / selects ── */
+  [data-testid="stSelectbox"] > div,
+  [data-baseweb="select"] { background-color: #393e41 !important; color: #f6f7eb !important; }
+
+  /* ── Header ── */
   .lk-header {
-    background: linear-gradient(135deg, #00427A, #003060);
-    border-left: 4px solid #FFC20E;
-    padding: 16px 24px;
+    background: linear-gradient(135deg, #393e41, #2b2f31);
+    border-left: 5px solid #e94f37;
+    padding: 20px 28px;
     border-radius: 6px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
-  .lk-title   { color: #FFC20E; font-size: 1.6rem; font-weight: 800;
-                 letter-spacing: 1px; text-transform: uppercase; margin: 0; }
-  .lk-sub     { color: #aabbcc; font-size: 0.85rem; margin: 4px 0 0 0; }
+  .lk-title { color: #e94f37; font-size: 2rem; font-weight: 800;
+               letter-spacing: 1.5px; text-transform: uppercase; margin: 0; }
+  .lk-sub   { color: #a8ada8; font-size: 1rem; margin: 6px 0 0 0; }
 
-  /* Metric cards */
+  /* ── Metric cards ── */
   [data-testid="metric-container"] {
-    background: #0d1e35;
-    border: 1px solid #00427A;
-    border-top: 3px solid #FFC20E;
+    background: #393e41;
+    border: 1px solid #4d5457;
+    border-top: 4px solid #e94f37;
     border-radius: 6px;
-    padding: 12px;
+    padding: 14px;
   }
-  [data-testid="metric-container"] label  { color: #FFC20E !important; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; }
-  [data-testid="metric-container"] [data-testid="metric-value"] { color: #ffffff !important; font-size: 1.8rem; font-weight: 800; }
+  [data-testid="metric-container"] label {
+    color: #e94f37 !important; font-weight: 700;
+    font-size: 0.9rem !important; text-transform: uppercase;
+  }
+  [data-testid="metric-container"] [data-testid="metric-value"] {
+    color: #f6f7eb !important; font-size: 2.2rem !important; font-weight: 800;
+  }
+  [data-testid="metric-container"] [data-testid="metric-delta"] {
+    font-size: 1rem !important;
+  }
 
-  /* Tab active state */
+  /* ── Tabs ── */
   button[data-baseweb="tab"][aria-selected="true"] {
-    background-color: #FFC20E !important;
-    color: #00427A !important;
+    background-color: #e94f37 !important;
+    color: #f6f7eb !important;
     font-weight: 800 !important;
+    font-size: 1.05rem !important;
     border-radius: 4px 4px 0 0;
   }
-  button[data-baseweb="tab"] { color: #6688aa; font-size: 0.9rem; }
+  button[data-baseweb="tab"] {
+    color: #a8ada8 !important;
+    font-size: 1rem !important;
+  }
 
-  /* Section headers */
-  .section-header { color: #FFC20E; font-size: 1rem; font-weight: 700;
-                    text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
-  .info-card { background: #0d1e35; border: 1px solid #1e3a5f; border-radius: 6px; padding: 12px; }
+  /* ── Section headers ── */
+  .section-header {
+    color: #e94f37; font-size: 1.15rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px;
+  }
+  .info-card {
+    background: #393e41; border: 1px solid #4d5457;
+    border-radius: 6px; padding: 14px; font-size: 1.05rem;
+  }
 
-  /* Feature badges */
-  .badge-on  { background: #0a2d0a; color: #4ade80; border: 1px solid #2a5a2a;
-               border-radius: 4px; padding: 2px 8px; font-size: 0.8rem; margin: 2px; display: inline-block; }
-  .badge-off { background: #2d0a0a; color: #f87171; border: 1px solid #5a2a2a;
-               border-radius: 4px; padding: 2px 8px; font-size: 0.8rem; margin: 2px; display: inline-block; }
+  /* ── Feature badges ── */
+  .badge-on  { background: #1a3320; color: #6ddf8a; border: 1px solid #2e5e3a;
+               border-radius: 4px; padding: 3px 10px; font-size: 0.95rem;
+               margin: 3px; display: inline-block; font-weight: 600; }
+  .badge-off { background: #3d1a18; color: #f07068; border: 1px solid #6e2e2a;
+               border-radius: 4px; padding: 3px 10px; font-size: 0.95rem;
+               margin: 3px; display: inline-block; font-weight: 600; }
+
+  /* ── Dataframe ── */
+  [data-testid="stDataFrame"] { font-size: 1rem !important; }
+  [data-testid="stDataFrame"] th { font-size: 1rem !important; font-weight: 700; }
+
+  /* ── Warnings / info ── */
+  [data-testid="stAlert"] { font-size: 1rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -88,8 +123,8 @@ st.markdown("""
 st.markdown("""
 <div class="lk-header">
   <p class="lk-title">⚙ Turbofan RUL Dashboard</p>
-  <p class="lk-sub">Lakehead University · Faculty of Engineering · ESOF-4011 Applied Computational Intelligence</p>
-  <p class="lk-sub">Felix Ikokwu &amp; Hunter Antal — NASA C-MAPSS FD001 · Random Forest · MLP · LSTM</p>
+  <p class="lk-sub">Lakehead University &nbsp;·&nbsp; Faculty of Engineering &nbsp;·&nbsp; ESOF-4011 Applied Computational Intelligence</p>
+  <p class="lk-sub">Felix Ikokwu &amp; Hunter Antal &nbsp;·&nbsp; NASA C-MAPSS FD001 &nbsp;·&nbsp; Random Forest · MLP · LSTM</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -274,7 +309,7 @@ with tab1:
     st.markdown("---")
 
     # Dual sensor comparison
-    st.markdown('<p class="section-header">Sensor Comparison  <span style="font-size:0.75rem;font-weight:400;color:#6688aa">&nbsp;🟢 retained &nbsp; 🔴 removed</span></p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-header">Sensor Comparison  <span style="font-size:0.9rem;font-weight:400;color:#a8ada8">&nbsp;🟢 retained &nbsp; 🔴 removed</span></p>', unsafe_allow_html=True)
 
     # Default selections: first two retained features
     default_a = _FEATURE_LABELS[next(i for i, f in enumerate(ALL_FEATURES) if f in SELECTED_FEATURES)]

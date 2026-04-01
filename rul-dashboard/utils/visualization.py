@@ -5,21 +5,24 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 
-# ── Lakehead theme ────────────────────────────────────────────────────────────
-COBALT   = "#00427A"
-GOLD     = "#FFC20E"
-WHITE    = "#FFFFFF"
-BG_DARK  = "#060e1a"
-BG_CARD  = "#0d1e35"
-TEXT_DIM = "#6688aa"
+# ── Colour scheme: Ivory / Fiery Terracotta / Gunmetal ───────────────────────
+TERRACOTTA = "#e94f37"
+IVORY      = "#f6f7eb"
+GUNMETAL   = "#393e41"
+BG_DARK    = "#2b2f31"       # slightly deeper gunmetal for page bg
+BG_CARD    = "#393e41"       # gunmetal for card/plot bg
+TEXT_DIM   = "#a8ada8"       # muted ivory-grey for gridlines / dim text
 
 _LAYOUT = dict(
     paper_bgcolor=BG_DARK,
     plot_bgcolor=BG_CARD,
-    font=dict(color=WHITE, family="system-ui"),
-    margin=dict(l=40, r=20, t=40, b=40),
-    xaxis=dict(gridcolor="#1e3a5f", zerolinecolor="#1e3a5f"),
-    yaxis=dict(gridcolor="#1e3a5f", zerolinecolor="#1e3a5f"),
+    font=dict(color=IVORY, family="system-ui", size=15),
+    margin=dict(l=48, r=24, t=52, b=48),
+    xaxis=dict(gridcolor="#4d5457", zerolinecolor="#4d5457",
+               tickfont=dict(size=13), title_font=dict(size=14)),
+    yaxis=dict(gridcolor="#4d5457", zerolinecolor="#4d5457",
+               tickfont=dict(size=13), title_font=dict(size=14)),
+    title_font=dict(size=17, color=IVORY),
 )
 
 
@@ -32,7 +35,7 @@ def sensor_time_series(engine_df, sensor: str) -> go.Figure:
     """Line chart of a single sensor reading over cycles for one engine."""
     fig = go.Figure(go.Scatter(
         x=engine_df["cycle"], y=engine_df[sensor],
-        mode="lines", line=dict(color=GOLD, width=2),
+        mode="lines", line=dict(color=TERRACOTTA, width=3),
         name=sensor,
     ))
     fig.update_layout(
@@ -48,12 +51,13 @@ def rul_degradation_curve(engine_df) -> go.Figure:
     fig = go.Figure(go.Scatter(
         x=engine_df["cycle"], y=engine_df["RUL"],
         mode="lines+markers",
-        line=dict(color=GOLD, width=2),
-        marker=dict(size=3, color=GOLD),
+        line=dict(color=TERRACOTTA, width=3),
+        marker=dict(size=4, color=TERRACOTTA),
         name="RUL",
     ))
     fig.add_hline(y=125, line_dash="dash", line_color=TEXT_DIM,
-                  annotation_text="RUL cap (125)", annotation_position="top right")
+                  annotation_text="RUL cap (125)", annotation_position="top right",
+                  annotation_font=dict(color=TEXT_DIM, size=13))
     fig.update_layout(
         title=f"RUL Degradation — Engine {engine_df['engine_id'].iloc[0]}",
         xaxis_title="Cycle", yaxis_title="Remaining Useful Life",
@@ -64,7 +68,8 @@ def rul_degradation_curve(engine_df) -> go.Figure:
 
 def metrics_bar_chart(models, mae_vals, rmse_vals, r2_vals) -> go.Figure:
     """Grouped bar chart: MAE / RMSE / R² for each model."""
-    colors = [COBALT, GOLD, WHITE]
+    # Terracotta for RF, Ivory for MLP, muted for LSTM
+    colors = [TERRACOTTA, IVORY, TEXT_DIM]
     fig = make_subplots(rows=1, cols=3, subplot_titles=["MAE", "RMSE", "R²"])
 
     for col, (metric, vals) in enumerate(
@@ -75,16 +80,19 @@ def metrics_bar_chart(models, mae_vals, rmse_vals, r2_vals) -> go.Figure:
                 name=model, x=[model], y=[val],
                 marker_color=colors[i],
                 text=[f"{val:.3f}"], textposition="outside",
+                textfont=dict(size=14),
                 showlegend=(col == 1),
             ), row=1, col=col)
 
     fig.update_layout(
         barmode="group", title="Model Metrics Comparison",
         paper_bgcolor=BG_DARK, plot_bgcolor=BG_CARD,
-        font=dict(color=WHITE), margin=dict(l=20, r=20, t=60, b=20),
-        legend=dict(bgcolor=BG_CARD, bordercolor=COBALT),
+        font=dict(color=IVORY, size=15), margin=dict(l=24, r=24, t=64, b=24),
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
+        title_font=dict(size=17, color=IVORY),
     )
-    fig.update_yaxes(gridcolor="#1e3a5f")
+    fig.update_yaxes(gridcolor="#4d5457")
+    fig.update_annotations(font_size=15)
     return fig
 
 
@@ -94,12 +102,12 @@ def scatter_pred_vs_actual(y_true, y_pred, model_name: str) -> go.Figure:
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=y_true, y=y_pred, mode="markers",
-        marker=dict(color=COBALT, size=4, opacity=0.6),
+        marker=dict(color=TERRACOTTA, size=5, opacity=0.65),
         name="Predictions",
     ))
     fig.add_trace(go.Scatter(
         x=[lo, hi], y=[lo, hi], mode="lines",
-        line=dict(color=GOLD, dash="dash", width=2),
+        line=dict(color=IVORY, dash="dash", width=2),
         name="Perfect prediction",
     ))
     fig.update_layout(
@@ -112,46 +120,46 @@ def scatter_pred_vs_actual(y_true, y_pred, model_name: str) -> go.Figure:
 
 def residuals_histogram(residuals_dict: dict) -> go.Figure:
     """Overlaid residual distributions for multiple models."""
-    colors = [COBALT, GOLD, WHITE]
+    colors = [TERRACOTTA, IVORY, TEXT_DIM]
     fig = go.Figure()
     for (name, res), color in zip(residuals_dict.items(), colors):
         fig.add_trace(go.Histogram(
-            x=res, name=name, opacity=0.6,
+            x=res, name=name, opacity=0.65,
             marker_color=color, nbinsx=50,
         ))
     fig.update_layout(
         barmode="overlay", title="Residual Distributions",
         xaxis_title="Residual (Predicted − Actual)", yaxis_title="Count",
         **_LAYOUT,
-        legend=dict(bgcolor=BG_CARD, bordercolor=COBALT),
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
     )
     return fig
 
 
 def rul_gauge(predicted_rul: float) -> go.Figure:
-    """Color-coded gauge: green >60, yellow 20–60, red <20."""
-    color = "#2ecc71" if predicted_rul > 60 else ("#f39c12" if predicted_rul >= 20 else "#e74c3c")
+    """Color-coded gauge: green >60, amber 20–60, red <20."""
+    needle_color = "#5cb85c" if predicted_rul > 60 else ("#e0a800" if predicted_rul >= 20 else TERRACOTTA)
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=predicted_rul,
-        title={"text": "Predicted RUL (cycles)", "font": {"color": WHITE}},
-        number={"font": {"color": color, "size": 48}},
+        title={"text": "Predicted RUL (cycles)", "font": {"color": IVORY, "size": 18}},
+        number={"font": {"color": needle_color, "size": 56}},
         gauge={
-            "axis": {"range": [0, 125], "tickcolor": WHITE,
-                     "tickfont": {"color": WHITE}},
-            "bar": {"color": color, "thickness": 0.3},
+            "axis": {"range": [0, 125], "tickcolor": IVORY,
+                     "tickfont": {"color": IVORY, "size": 13}},
+            "bar": {"color": needle_color, "thickness": 0.3},
             "bgcolor": BG_CARD,
-            "borderwidth": 1, "bordercolor": COBALT,
+            "borderwidth": 1, "bordercolor": TERRACOTTA,
             "steps": [
-                {"range": [0,  20], "color": "#2d0a0a"},
-                {"range": [20, 60], "color": "#2d1a00"},
-                {"range": [60,125], "color": "#0a2d0a"},
+                {"range": [0,  20], "color": "#4a2020"},
+                {"range": [20, 60], "color": "#3d3020"},
+                {"range": [60,125], "color": "#203320"},
             ],
-            "threshold": {"line": {"color": GOLD, "width": 3}, "value": predicted_rul},
+            "threshold": {"line": {"color": IVORY, "width": 3}, "value": predicted_rul},
         },
     ))
-    fig.update_layout(paper_bgcolor=BG_DARK, font=dict(color=WHITE),
-                      margin=dict(l=20, r=20, t=60, b=20), height=280)
+    fig.update_layout(paper_bgcolor=BG_DARK, font=dict(color=IVORY),
+                      margin=dict(l=24, r=24, t=64, b=24), height=300)
     return fig
 
 
@@ -160,16 +168,17 @@ def prediction_trace(cycles, y_pred, y_true=None) -> go.Figure:
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=cycles, y=y_pred, mode="lines",
-        line=dict(color=GOLD, width=2), name="Predicted RUL",
+        line=dict(color=TERRACOTTA, width=3), name="Predicted RUL",
     ))
     if y_true is not None:
         fig.add_trace(go.Scatter(
             x=cycles, y=y_true, mode="lines",
-            line=dict(color=COBALT, width=2, dash="dot"), name="Actual RUL",
+            line=dict(color=IVORY, width=2, dash="dot"), name="Actual RUL",
         ))
     fig.update_layout(
         title="RUL Prediction vs Actual", xaxis_title="Cycle",
         yaxis_title="RUL", **_LAYOUT,
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
     )
     return fig
 
@@ -179,32 +188,32 @@ def training_curve(train_losses: list, val_losses: list) -> go.Figure:
     epochs = list(range(1, len(train_losses) + 1))
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=epochs, y=train_losses, mode="lines",
-                             line=dict(color=GOLD, width=2), name="Train Loss"))
+                             line=dict(color=TERRACOTTA, width=3), name="Train Loss"))
     fig.add_trace(go.Scatter(x=epochs, y=val_losses,  mode="lines",
-                             line=dict(color=COBALT, width=2), name="Val Loss"))
+                             line=dict(color=IVORY, width=2, dash="dot"), name="Val Loss"))
     fig.update_layout(
         title="LSTM Training Curve", xaxis_title="Epoch",
         yaxis_title="Loss", **_LAYOUT,
-        legend=dict(bgcolor=BG_CARD, bordercolor=COBALT),
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
     )
     return fig
 
 
 def cdf_absolute_errors(errors_dict: dict) -> go.Figure:
     """CDF of absolute errors for two or more models."""
-    colors = [GOLD, COBALT]
+    colors = [TERRACOTTA, IVORY]
     fig = go.Figure()
     for (name, errs), color in zip(errors_dict.items(), colors):
         sorted_e = np.sort(np.abs(errs))
         cdf = np.arange(1, len(sorted_e) + 1) / len(sorted_e)
         fig.add_trace(go.Scatter(
             x=sorted_e, y=cdf, mode="lines",
-            line=dict(color=color, width=2), name=name,
+            line=dict(color=color, width=3), name=name,
         ))
     fig.update_layout(
         title="CDF of Absolute Errors",
         xaxis_title="Absolute Error (cycles)", yaxis_title="CDF",
         **_LAYOUT,
-        legend=dict(bgcolor=BG_CARD, bordercolor=COBALT),
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
     )
     return fig
