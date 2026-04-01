@@ -1,5 +1,5 @@
 # rul-dashboard/app.py
-import os, json, base64
+import os, json, base64, urllib.request
 import streamlit.components.v1 as components
 import numpy as np
 import pandas as pd
@@ -25,6 +25,20 @@ from utils.visualization import (
 BASE_DIR   = os.path.dirname(__file__)
 DATA_DIR   = os.path.join(BASE_DIR, "data")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
+
+# ── Download model weights from Hugging Face if not present ───────────────────
+_HF_BASE = "https://huggingface.co/HunterLatna/rul-turbofan-models/resolve/main"
+_HF_FILES = ["rf_model.pkl", "best_lstm.pt", "mlp_model.pt", "scaler.pkl"]
+
+def _ensure_models():
+    os.makedirs(MODELS_DIR, exist_ok=True)
+    for fname in _HF_FILES:
+        dest = os.path.join(MODELS_DIR, fname)
+        if not os.path.exists(dest):
+            with st.spinner(f"Downloading {fname} from Hugging Face…"):
+                urllib.request.urlretrieve(f"{_HF_BASE}/{fname}", dest)
+
+_ensure_models()
 
 # ── Pre-load SVG once at startup (157 KB — too expensive to re-read per render) ─
 _svg_path = os.path.join(BASE_DIR, "JetEngineAnnotated.svg")
