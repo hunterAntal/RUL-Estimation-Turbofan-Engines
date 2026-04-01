@@ -387,16 +387,14 @@ with tab2:
                 width='stretch',
             )
 
-        st.markdown('<p class="section-header">Residual Distributions</p>', unsafe_allow_html=True)
-        residuals = {name: y_pred - y_true for name, (y_true, y_pred) in preds.items()}
-        st.plotly_chart(residuals_histogram(residuals), width='stretch')
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 3 — RUL PREDICTOR
 # ══════════════════════════════════════════════════════════════════════════════
 with tab3:
     st.markdown(
-        '<p class="lk-sub" style="margin-bottom:12px;">These are <strong>test-set engines</strong> — '
+        '<p class="lk-sub" style="margin-bottom:12px;">These are <strong>test-set engines, '
         'a separate group of 100 engines stopped before failure. Unlike the training engines '
         '(which ran to RUL = 0), each test engine has cycles remaining, and the goal is to '
         'predict how many.</p>',
