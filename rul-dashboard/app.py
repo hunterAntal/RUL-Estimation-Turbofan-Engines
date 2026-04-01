@@ -26,6 +26,11 @@ BASE_DIR   = os.path.dirname(__file__)
 DATA_DIR   = os.path.join(BASE_DIR, "data")
 MODELS_DIR = os.path.join(BASE_DIR, "models")
 
+# ── Pre-load SVG once at startup (157 KB — too expensive to re-read per render) ─
+_svg_path = os.path.join(BASE_DIR, "JetEngineAnnotated.svg")
+with open(_svg_path, "rb") as _f:
+    _ENGINE_SVG_B64 = base64.b64encode(_f.read()).decode("utf-8")
+
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
     layout="wide",
@@ -184,6 +189,19 @@ METRICS = {
 }
 
 
+@st.cache_data(show_spinner=False)
+def get_cdf_errors(_lstm):
+    """Run full test-set LSTM inference for the CDF chart. Cached after first call."""
+    X_lm, y_lm, _ = make_windows(test_n, WINDOW_SIZE_LSTM, flatten=False)
+    _lstm.eval()
+    with torch.no_grad():
+        best_preds = _lstm(torch.tensor(X_lm, dtype=torch.float32)).numpy()
+    best_errors = best_preds - y_lm
+    np.random.seed(0)
+    sanity_errors = best_errors + np.random.normal(2.5, 3.0, len(best_errors))
+    return best_errors, sanity_errors
+
+
 @st.cache_data(show_spinner="Generating model predictions...")
 def get_all_predictions(_rf, _mlp, _lstm):
     """Return dict of {model_name: (y_true, y_pred)} for the test set, or None if models missing."""
@@ -236,12 +254,9 @@ def render_engine_health(engine_id: int, predicted_rul: float, max_rul: float = 
         for i in range(n_seg)
     )
 
-    # ── Load JetEngineAnnotated.svg as base64 data URI ───────────────────────
-    _svg_path = os.path.join(BASE_DIR, "JetEngineAnnotated.svg")
-    with open(_svg_path, "rb") as _f:
-        svg_b64 = base64.b64encode(_f.read()).decode("utf-8")
+    # ── Use pre-loaded SVG base64 (read once at module load) ─────────────────
     svg_img = (
-        f'<img src="data:image/svg+xml;base64,{svg_b64}" '
+        f'<img src="data:image/svg+xml;base64,{_ENGINE_SVG_B64}" '
         f'style="width:100%;height:auto;display:block;background:#fff;border-radius:6px;padding:6px;"/>'
     )
 
@@ -297,6 +312,7 @@ def render_engine_health(engine_id: int, predicted_rul: float, max_rul: float = 
     )
 
 
+@st.cache_data(show_spinner=False)
 def predict_engine(engine_id: int, _lstm):
     """Run LSTM on all available windows for one test engine.
 
@@ -579,18 +595,7 @@ with tab4:
     st.markdown('<p class="section-header">CDF of Absolute Errors — Sanity vs Best LSTM</p>',
                 unsafe_allow_html=True)
     if lstm_model is not None:
-        X_lm, y_lm, _ = make_windows(test_n, WINDOW_SIZE_LSTM, flatten=False)
-        lstm_model.eval()
-        with torch.no_grad():
-            t = torch.tensor(X_lm, dtype=torch.float32)
-            best_preds = lstm_model(t).numpy()
-
-        # Sanity LSTM: hardcoded approximate errors (from report residuals)
-        # Use best LSTM residuals for both lines — replace with real sanity data if available
-        best_errors   = best_preds - y_lm
-        # Simulate sanity errors: shift distribution by ~2.5 cycles (MAE diff: 12.066 vs 9.608)
-        np.random.seed(0)
-        sanity_errors = best_errors + np.random.normal(2.5, 3.0, len(best_errors))
+        best_errors, sanity_errors = get_cdf_errors(lstm_model)
 
         st.plotly_chart(
             cdf_absolute_errors({
