@@ -211,6 +211,172 @@ def get_all_predictions(_rf, _mlp, _lstm):
     return results if results else None
 
 
+def render_engine_health(engine_id: int, predicted_rul: float, max_rul: float = 125.0) -> str:
+    """Return an HTML string: turbofan SVG + video-game health bar."""
+    pct   = max(0.0, min(1.0, predicted_rul / max_rul))
+    pct_int = int(pct * 100)
+
+    if predicted_rul > 60:
+        bar_color, status = "#5cb85c", "OPERATIONAL"
+    elif predicted_rul >= 20:
+        bar_color, status = "#e0a800", "CAUTION"
+    else:
+        bar_color, status = "#e94f37", "CRITICAL"
+
+    # ── 25-segment health bar ─────────────────────────────────────────────────
+    n_seg  = 25
+    filled = round(pct * n_seg)
+    segs   = "".join(
+        '<div style="flex:1;height:100%;background:{};border-radius:3px;'
+        'box-shadow:{};"></div>'.format(
+            bar_color if i < filled else "#3a3f42",
+            f"0 0 6px {bar_color}88" if i < filled else "none",
+        )
+        for i in range(n_seg)
+    )
+
+    # ── Turbofan SVG (cross-section side view) ────────────────────────────────
+    svg = """
+<svg viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;height:auto;display:block;">
+  <defs>
+    <linearGradient id="nacG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#5a6065"/>
+      <stop offset="45%"  stop-color="#393e41"/>
+      <stop offset="100%" stop-color="#2b2f31"/>
+    </linearGradient>
+    <radialGradient id="flameG" cx="20%" cy="50%" r="80%">
+      <stop offset="0%"   stop-color="#f6f7eb" stop-opacity="0.95"/>
+      <stop offset="35%"  stop-color="#e94f37" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#e94f37" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="exhaustG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#e94f37" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#e94f37" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Exhaust flame glow -->
+  <ellipse cx="440" cy="100" rx="65" ry="35" fill="url(#flameG)"/>
+  <ellipse cx="428" cy="100" rx="42" ry="22" fill="#e94f37" opacity="0.25"/>
+
+  <!-- Outer nacelle body -->
+  <path d="M 78,36 Q 56,100 78,164 L 388,144 L 412,100 L 388,56 Z"
+        fill="url(#nacG)" stroke="#6d7275" stroke-width="2"/>
+
+  <!-- Nacelle highlight glint -->
+  <path d="M 82,40 Q 62,100 82,160 L 92,156 Q 73,100 92,44 Z"
+        fill="#6d7275" opacity="0.35"/>
+
+  <!-- Bypass duct divider lines -->
+  <path d="M 98,68 L 382,79" stroke="#4d5457" stroke-width="1.5" stroke-dasharray="7,4"/>
+  <path d="M 98,132 L 382,121" stroke="#4d5457" stroke-width="1.5" stroke-dasharray="7,4"/>
+
+  <!-- Core engine tube -->
+  <path d="M 98,72 L 378,80 L 378,120 L 98,128 Z"
+        fill="#1e2224" stroke="#5a6065" stroke-width="1.5"/>
+
+  <!-- Compressor blades (front of core) -->
+  <line x1="118" y1="73" x2="118" y2="127" stroke="#a8ada8" stroke-width="2.5"/>
+  <line x1="138" y1="73" x2="138" y2="127" stroke="#a8ada8" stroke-width="2.5"/>
+  <line x1="157" y1="74" x2="157" y2="126" stroke="#a8ada8" stroke-width="2.5"/>
+  <line x1="175" y1="74" x2="175" y2="126" stroke="#a8ada8" stroke-width="2.5"/>
+
+  <!-- Combustion chamber -->
+  <rect x="183" y="76" width="86" height="48" rx="5"
+        fill="#3a1a10" stroke="#e94f37" stroke-width="2"/>
+  <ellipse cx="226" cy="100" rx="24" ry="14" fill="#e94f37" opacity="0.55"/>
+  <ellipse cx="226" cy="100" rx="11" ry="7"  fill="#f6f7eb" opacity="0.65"/>
+
+  <!-- Turbine blades (back of core) -->
+  <line x1="280" y1="76" x2="280" y2="124" stroke="#a8ada8" stroke-width="2.5"/>
+  <line x1="299" y1="77" x2="299" y2="123" stroke="#a8ada8" stroke-width="2.5"/>
+  <line x1="317" y1="78" x2="317" y2="122" stroke="#a8ada8" stroke-width="2.5"/>
+  <line x1="334" y1="79" x2="334" y2="121" stroke="#a8ada8" stroke-width="2.5"/>
+
+  <!-- Exhaust nozzle -->
+  <path d="M 378,80 L 412,91 L 412,109 L 378,120 Z"
+        fill="#1e2224" stroke="#6d7275" stroke-width="1.5"/>
+  <path d="M 378,80 L 460,68 L 460,132 L 378,120 Z" fill="url(#exhaustG)"/>
+
+  <!-- Inlet cowl -->
+  <ellipse cx="80" cy="100" rx="20" ry="65" fill="#4d5457" stroke="#6d7275" stroke-width="2"/>
+  <ellipse cx="84" cy="100" rx="13" ry="52" fill="#1e2224" stroke="#a8ada8" stroke-width="1"/>
+
+  <!-- Fan hub disk -->
+  <ellipse cx="97" cy="100" rx="11" ry="57" fill="#393e41" stroke="#e94f37" stroke-width="2"/>
+  <circle  cx="97" cy="100" r="8"           fill="#4d5457"  stroke="#e94f37" stroke-width="1.5"/>
+
+  <!-- Fan blades -->
+  <line x1="87" y1="52"  x2="107" y2="49"  stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="87" y1="65"  x2="108" y2="62"  stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="87" y1="78"  x2="108" y2="76"  stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="87" y1="91"  x2="108" y2="91"  stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="87" y1="100" x2="108" y2="100" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="87" y1="109" x2="108" y2="109" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="87" y1="122" x2="108" y2="124" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="87" y1="135" x2="108" y2="138" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
+  <line x1="87" y1="148" x2="107" y2="151" stroke="#f6f7eb" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Mounting pylon (top strut) -->
+  <rect x="196" y="0" width="28" height="38" rx="3" fill="#4d5457" stroke="#6d7275" stroke-width="1.5"/>
+  <line x1="202" y1="4"  x2="202" y2="36" stroke="#5a6065" stroke-width="1"/>
+  <line x1="210" y1="4"  x2="210" y2="36" stroke="#5a6065" stroke-width="1"/>
+  <line x1="218" y1="4"  x2="218" y2="36" stroke="#5a6065" stroke-width="1"/>
+</svg>"""
+
+    return """
+<div style="background:#1e2224;border:2px solid {bc};border-radius:10px;
+            padding:22px 26px;margin-bottom:16px;">
+
+  <!-- Title row -->
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
+    <span style="color:#a8ada8;font-size:1rem;letter-spacing:2px;text-transform:uppercase;">
+      ENGINE UNIT #{eid}
+    </span>
+    <span style="color:{bc};font-size:1.5rem;font-weight:800;letter-spacing:3px;">
+      ▶ {status}
+    </span>
+  </div>
+
+  <!-- Engine SVG + health bar side-by-side -->
+  <div style="display:flex;gap:28px;align-items:center;">
+
+    <!-- Engine SVG -->
+    <div style="flex:3;min-width:0;">{svg}</div>
+
+    <!-- Health bar column -->
+    <div style="flex:2;min-width:160px;display:flex;flex-direction:column;gap:10px;">
+      <div style="color:#a8ada8;font-size:0.85rem;letter-spacing:2px;">ENGINE HEALTH</div>
+
+      <!-- Segmented bar (vertical) -->
+      <div style="display:flex;flex-direction:column-reverse;gap:3px;
+                  height:200px;background:#12181a;border:2px solid #3a3f42;
+                  border-radius:6px;padding:6px;">
+        {segs_v}
+      </div>
+
+      <!-- RUL number -->
+      <div style="text-align:center;">
+        <span style="color:{bc};font-size:3rem;font-weight:800;line-height:1;">{rul:.0f}</span>
+        <br>
+        <span style="color:#a8ada8;font-size:0.95rem;">cycles remaining</span>
+      </div>
+
+      <!-- Percent -->
+      <div style="text-align:center;background:#12181a;border:1px solid {bc};
+                  border-radius:4px;padding:6px;">
+        <span style="color:{bc};font-size:1.4rem;font-weight:700;">{pct}%</span>
+        <span style="color:#a8ada8;font-size:0.85rem;"> of max life</span>
+      </div>
+    </div>
+  </div>
+</div>""".format(
+        bc=bar_color, eid=engine_id, status=status, svg=svg,
+        segs_v=segs, rul=predicted_rul, pct=pct_int,
+    )
+
+
 def predict_engine(engine_id: int, _lstm):
     """Run LSTM on all available windows for one test engine.
 
@@ -416,20 +582,18 @@ with tab3:
         else:
             error = abs(final_pred - final_actual)
 
-            # Top row: gauge + metrics
-            gcol, mcol = st.columns([1, 1])
-            with gcol:
-                st.plotly_chart(rul_gauge(final_pred), width='stretch')
-            with mcol:
-                st.markdown("<br><br>", unsafe_allow_html=True)
-                st.metric("Predicted RUL",  f"{final_pred:.1f} cycles")
-                st.metric("Actual RUL",     f"{final_actual:.1f} cycles")
-                st.metric("Prediction Error", f"±{error:.1f} cycles",
-                          delta=f"{error:.1f} off",
-                          delta_color="inverse")
-                pct_within_10 = (error <= 10)
-                status = "✅ Within 10 cycles" if pct_within_10 else f"⚠️ {error:.0f} cycles off"
-                st.markdown(f'<div class="info-card">{status}</div>', unsafe_allow_html=True)
+            # Engine health display
+            st.markdown(
+                render_engine_health(sel_test_engine, final_pred),
+                unsafe_allow_html=True,
+            )
+
+            # Metrics row below the panel
+            mcol1, mcol2, mcol3 = st.columns(3)
+            mcol1.metric("Predicted RUL",    f"{final_pred:.1f} cycles")
+            mcol2.metric("Actual RUL",        f"{final_actual:.1f} cycles")
+            mcol3.metric("Prediction Error",  f"±{error:.1f} cycles",
+                         delta=f"{error:.1f} off", delta_color="inverse")
 
             st.markdown("---")
 
