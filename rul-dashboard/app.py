@@ -395,6 +395,13 @@ with tab2:
 # TAB 3 — RUL PREDICTOR
 # ══════════════════════════════════════════════════════════════════════════════
 with tab3:
+    st.markdown(
+        '<p class="lk-sub" style="margin-bottom:12px;">These are <strong>test-set engines</strong> — '
+        'a separate group of 100 engines stopped before failure. Unlike the training engines '
+        '(which ran to RUL = 0), each test engine has cycles remaining, and the goal is to '
+        'predict how many.</p>',
+        unsafe_allow_html=True,
+    )
     if lstm_model is None:
         st.warning("⚠️ LSTM weights not found. Run `python notebook_export.py` to enable live predictions.")
     else:
