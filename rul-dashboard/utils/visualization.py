@@ -23,7 +23,6 @@ _LAYOUT = dict(
     yaxis=dict(gridcolor="#4d5457", zerolinecolor="#4d5457",
                tickfont=dict(size=17), title_font=dict(size=19)),
     title_font=dict(size=23, color=IVORY),
-    legend=dict(font=dict(size=17)),
 )
 
 
@@ -132,7 +131,7 @@ def residuals_histogram(residuals_dict: dict) -> go.Figure:
         barmode="overlay", title="Residual Distributions",
         xaxis_title="Residual (Predicted − Actual)", yaxis_title="Count",
         **_LAYOUT,
-        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=17)),
     )
     return fig
 
@@ -179,7 +178,7 @@ def prediction_trace(cycles, y_pred, y_true=None) -> go.Figure:
     fig.update_layout(
         title="RUL Prediction vs Actual", xaxis_title="Cycle",
         yaxis_title="RUL", **_LAYOUT,
-        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=17)),
     )
     return fig
 
@@ -195,7 +194,7 @@ def training_curve(train_losses: list, val_losses: list) -> go.Figure:
     fig.update_layout(
         title="LSTM Training Curve", xaxis_title="Epoch",
         yaxis_title="Loss", **_LAYOUT,
-        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=17)),
     )
     return fig
 
@@ -215,6 +214,6 @@ def cdf_absolute_errors(errors_dict: dict) -> go.Figure:
         title="CDF of Absolute Errors",
         xaxis_title="Absolute Error (cycles)", yaxis_title="CDF",
         **_LAYOUT,
-        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=14)),
+        legend=dict(bgcolor=BG_CARD, bordercolor=TERRACOTTA, font=dict(size=17)),
     )
     return fig
