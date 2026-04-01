@@ -1,5 +1,5 @@
 # rul-dashboard/app.py
-import os, json
+import os, json, base64
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -325,6 +325,13 @@ def render_engine_health(engine_id: int, predicted_rul: float, max_rul: float = 
   <line x1="218" y1="4"  x2="218" y2="36" stroke="#5a6065" stroke-width="1"/>
 </svg>"""
 
+    # Streamlit strips <svg> tags — encode as base64 data URI for <img> instead
+    svg_b64 = base64.b64encode(svg.strip().encode("utf-8")).decode("utf-8")
+    svg_img = (
+        f'<img src="data:image/svg+xml;base64,{svg_b64}" '
+        f'style="width:100%;height:auto;display:block;"/>'
+    )
+
     return """
 <div style="background:#1e2224;border:2px solid {bc};border-radius:10px;
             padding:22px 26px;margin-bottom:16px;">
@@ -335,15 +342,15 @@ def render_engine_health(engine_id: int, predicted_rul: float, max_rul: float = 
       ENGINE UNIT #{eid}
     </span>
     <span style="color:{bc};font-size:1.5rem;font-weight:800;letter-spacing:3px;">
-      ▶ {status}
+      &#9654; {status}
     </span>
   </div>
 
-  <!-- Engine SVG + health bar side-by-side -->
+  <!-- Engine image + health bar side-by-side -->
   <div style="display:flex;gap:28px;align-items:center;">
 
-    <!-- Engine SVG -->
-    <div style="flex:3;min-width:0;">{svg}</div>
+    <!-- Engine image -->
+    <div style="flex:3;min-width:0;">{svg_img}</div>
 
     <!-- Health bar column -->
     <div style="flex:2;min-width:160px;display:flex;flex-direction:column;gap:10px;">
@@ -372,7 +379,7 @@ def render_engine_health(engine_id: int, predicted_rul: float, max_rul: float = 
     </div>
   </div>
 </div>""".format(
-        bc=bar_color, eid=engine_id, status=status, svg=svg,
+        bc=bar_color, eid=engine_id, status=status, svg_img=svg_img,
         segs_v=segs, rul=predicted_rul, pct=pct_int,
     )
 
