@@ -334,14 +334,14 @@ def render_engine_health(engine_id: int, predicted_rul: float, max_rul: float = 
 
     return """
 <div style="background:#1e2224;border:2px solid {bc};border-radius:10px;
-            padding:22px 26px;margin-bottom:16px;">
+            padding:24px 28px;margin-bottom:16px;">
 
   <!-- Title row -->
-  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
-    <span style="color:#a8ada8;font-size:1rem;letter-spacing:2px;text-transform:uppercase;">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;">
+    <span style="color:#a8ada8;font-size:1.3rem;letter-spacing:2px;text-transform:uppercase;font-weight:600;">
       ENGINE UNIT #{eid}
     </span>
-    <span style="color:{bc};font-size:1.5rem;font-weight:800;letter-spacing:3px;">
+    <span style="color:{bc};font-size:2rem;font-weight:800;letter-spacing:3px;">
       &#9654; {status}
     </span>
   </div>
@@ -353,28 +353,28 @@ def render_engine_health(engine_id: int, predicted_rul: float, max_rul: float = 
     <div style="flex:3;min-width:0;">{svg_img}</div>
 
     <!-- Health bar column -->
-    <div style="flex:2;min-width:160px;display:flex;flex-direction:column;gap:10px;">
-      <div style="color:#a8ada8;font-size:0.85rem;letter-spacing:2px;">ENGINE HEALTH</div>
+    <div style="flex:2;min-width:180px;display:flex;flex-direction:column;gap:12px;">
+      <div style="color:#a8ada8;font-size:1.2rem;letter-spacing:2px;font-weight:700;text-transform:uppercase;">Engine Health</div>
 
       <!-- Segmented bar (vertical) -->
-      <div style="display:flex;flex-direction:column-reverse;gap:3px;
-                  height:200px;background:#12181a;border:2px solid #3a3f42;
-                  border-radius:6px;padding:6px;">
+      <div style="display:flex;flex-direction:column-reverse;gap:4px;
+                  height:240px;background:#12181a;border:2px solid #3a3f42;
+                  border-radius:6px;padding:7px;">
         {segs_v}
       </div>
 
       <!-- RUL number -->
       <div style="text-align:center;">
-        <span style="color:{bc};font-size:3rem;font-weight:800;line-height:1;">{rul:.0f}</span>
+        <span style="color:{bc};font-size:4rem;font-weight:800;line-height:1;">{rul:.0f}</span>
         <br>
-        <span style="color:#a8ada8;font-size:0.95rem;">cycles remaining</span>
+        <span style="color:#a8ada8;font-size:1.2rem;font-weight:600;">cycles remaining</span>
       </div>
 
       <!-- Percent -->
-      <div style="text-align:center;background:#12181a;border:1px solid {bc};
-                  border-radius:4px;padding:6px;">
-        <span style="color:{bc};font-size:1.4rem;font-weight:700;">{pct}%</span>
-        <span style="color:#a8ada8;font-size:0.85rem;"> of max life</span>
+      <div style="text-align:center;background:#12181a;border:2px solid {bc};
+                  border-radius:4px;padding:10px;">
+        <span style="color:{bc};font-size:2rem;font-weight:800;">{pct}%</span>
+        <span style="color:#a8ada8;font-size:1.1rem;"> of max life</span>
       </div>
     </div>
   </div>
